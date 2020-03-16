@@ -12,10 +12,13 @@ import datetime
 import json
 import logging
 import queue
+import os
 import threading
 import traceback
 import time
 import uuid
+import re
+from string import Formatter
 from logging.handlers import QueueListener, QueueHandler, BufferingHandler
 
 import requests
@@ -25,7 +28,7 @@ class SeqPyLogger:
         pass
 
     @staticmethod
-    def createQueueHandler():
+    def createQueueHandler(buffer_capacity=10):
         """createHandler
         
         Returns
@@ -33,24 +36,26 @@ class SeqPyLogger:
         QueueHandler
             Handler for sending LogRecords to Seq
         """
-        queue_handler = QueueHandler(queue.Queue(-1))
+        queue_handler = SeqPyLoggerQueueHandler(queue.Queue(-1))
 
-        handler = SeqPyLogger.createBufferHandler()
-        listener = QueueListener(queue_handler.queue, handler)
+        handler = SeqPyLogger.createBufferHandler(capacity=buffer_capacity)
+        
+        listener = SeqPyLoggerQueueListener(queue_handler.queue, handler)
         
         listener.start()
         
         return queue_handler
 
     @staticmethod
-    def createBufferHandler():
-        logger = SeqPyLoggerHandler(10)
-        formatter = logging.Formatter('%(asctime)s\t%(name)s\t%(levelname)s\t%(message)s')
-        logger.setFormatter(formatter)
+    def createBufferHandler(capacity=10):
+        logger = SeqPyLoggerHandler(capacity=capacity)
+        # formatter = logging.Formatter('%(asctime)s\t%(name)s\t%(levelname)s\t%(message)s')
+        # logger.setFormatter(formatter)
         return logger
     
 class SeqPyLoggerHandler(BufferingHandler):
     def __init__(self, capacity=10):
+        self.re_args = re.compile(r"\{.+\}")
         super().__init__(capacity=10)
     
     def flush(self):
@@ -62,84 +67,68 @@ class SeqPyLoggerHandler(BufferingHandler):
     def send_to_seq(self):
         batch_objects = []
         for record in self.buffer:
-            # print(dir(record))
             record_object = {
                 "@t": datetime.datetime.fromtimestamp(record.created).strftime("%Y-%m-%dT%H:%M:%S.%f%Z"),
-                "@m": record.message,
-                # "@mt": "",
                 "@l": record.levelname,
-                #"@x": record.exception,
-                "@i": uuid.uuid4().hex
+                "@mt": record.msg,
+                "@m": record.msg,
+                "@@Logger": record.name,
+                "@@Path": record.pathname,
+                "@@Line": record.lineno,
+                "@@Function": record.funcName,
+                "@@Thread": record.threadName,
+                "@@Pid": record.process,
+                "@@Environement": os.getenv("Environment", "NOT-SET")
             }
+
+            message = record.msg
+            for i, match in enumerate(self.re_args.findall(record.msg)):
+                try:
+                    message = message.replace(match, record.args[i])
+                    record_object.update({match[1:-1]: record.args[i]})
+                except:
+                    pass
+            record_object.update({"@m": message})
             ex = self.add_exception(record)
             if ex is not None:
-                record_object.update({"@e": ex})
+                record_object.update({"@x": ex})
+            print(record_object)
             batch_objects.append(json.dumps(record_object, separators=(',', ':')))
+            
         message_body = str.join("\n", batch_objects)
-        print(message_body)
         headers = {
             "X-Seq-ApiKey": os.getenv("SEQ_APIKEY"),
             "Content-type": "application/vnd.serilog.clef"
         }
+        server_url = os.getenv('SEQ_SERVER')
+        if (server_url[-1] != "/"):
+            server_url += "/"
+
         resonse = requests.post(f"{os.getenv('SEQ_SERVER')}api/events/raw", data=message_body, headers=headers)
-        print(resonse.status_code)
-        print(resonse.text)
+        print(resonse.status_code, resonse.text)
     
     def add_exception(self, record):
-        if record.exc_info and any(record.exc_info) and record.levelno == logging.ERROR:
+        if record.exc_info and any(record.exc_info):
             return str.join('', traceback.format_exception(*record.exc_info))
         else:
             return None
 
 
-
-
-def init():
-    # queue_handler = SeqPyLogHandler()
-    # handler = logging.StreamHandler()
-    # listener = QueueListener(queue_handler.queue, handler)
-    # root = logging.getLogger()
-    # formatter = logging.Formatter('%(threadName)s: %(message)s')
-    # handler.setFormatter(formatter)
-    # root.addHandler(queue_handler)
-    # listener.start()
-    # The log output will display the thread which generated
-    # the event (the main thread) rather than the internal
-    # thread which monitors the internal queue. This is what
-    # you want to happen.
-
-    root.warning('Look out!')
-    listener.stop()
-
-
-        # handler = logging.StreamHandler()
-        # formatter = logging.Formatter('%(asctime)s\t%(name)s\t%(levelname)s\t%(message)s')
-        # handler.setFormatter(formatter)\
-# def callback():
-#     queue_handler = SeqPyLogHandler()
+class SeqPyLoggerQueueHandler(QueueHandler):
+    def __init__(self, queue):
+        super().__init__(queue)
     
-#     handler = logging.StreamHandler()
-#     formatter = logging.Formatter('%(threadName)s: %(message)s')
-#     handler.setFormatter(formatter)
+    def prepare(self, record):
+        return record
     
-#     listener = QueueListener(queue_handler.queue, handler)
+    def flush(self):
+        return super().flush()
+
+
+class SeqPyLoggerQueueListener(QueueListener):
+    def __init__(self, queue, handler):
+        super().__init__(queue, handler)
     
-#     root = logging.getLogger()
-#     root.addHandler(queue_handler)
+    def prepare(self, record):
+        return record
 
-#     listener.start()
-
-#     # while 1:
-#     #     record = listener.dequeue(block=True)
-#     #     listener.handle(record)
-#     #     print(record)
-#     #     time.sleep(1)
-#     #     print(1)
-
-
-
-# def initialize():
-#     thread = threading.Thread(target=callback, args=tuple())
-#     thread.daemon = True  # Daemonize thread ## Nice explantion about daemon threads : https://stackoverflow.com/a/190017
-#     thread.start()        # Start the execution
-#     print("started")
