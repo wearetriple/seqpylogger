@@ -1,10 +1,11 @@
 import time
 import queue
+from logging import Handler
 from .seqpyloggerhandler import SeqPyLoggerHandler
 from .seqpyloggerqueuehandler import SeqPyLoggerQueueHandler
 from .seqpyloggerqueuelistener import SeqPyLoggerQueueListener
 
-class SeqPyLogger:
+class SeqPyLogger():
     def __init__(self):
         self.log_handler = None
 
@@ -30,3 +31,7 @@ class SeqPyLogger:
         self.log_handler.flush()
         if wait > 0:
             time.sleep(wait)
+
+class SeqPyLoggerClassHandler(Handler):
+    def __init__(self):
+        self = SeqPyLogger().get_handler()
