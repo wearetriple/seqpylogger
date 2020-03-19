@@ -27,6 +27,6 @@ class SeqPyLogger:
         return queue_handler
 
     def flush(self, wait=0):
-        if wait > 0:
-            time.sleep(1)
         self.log_handler.flush()
+        if wait > 0:
+            time.sleep(wait)
