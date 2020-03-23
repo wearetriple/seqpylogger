@@ -8,4 +8,4 @@ Gets items from this queue and passes them to a BufferHandler (with a 10 item ca
 After capacity the BufferHandler flushes the log messages to a custom http sender, for seq
 """
 
-from .seqpylogger import SeqPyLogger, SeqPyLoggerClassHandler
+from .seqpylogger import SeqPyLogger
