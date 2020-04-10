@@ -1,0 +1,25 @@
+init:
+    export PIPENV_VENV_IN_PROJECT="enabled"
+    pipenv install --dev --python=`which python3.8`
+
+run:
+    pipenv run python application.py
+
+test:
+    pipenv run pytest --doctest-modules --rootdir=tests --cov-config=tests/.coveragerc --cov=seqpylogger tests/
+
+format:
+    black -t py38 seqpylogger/
+
+typing:
+    pipenv run mypy seqpylogger/
+
+lint:
+    pipenv run pylint seqpylogger/
+
+security:
+    export PIPENV_VERBOSITY=-1
+    pipenv check
+    pipenv run bandit -x ./.venv -r .
+
+check/all: lint typing security test
