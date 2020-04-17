@@ -10,7 +10,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name="seqpylogger",
-    version='1.0.0',
+    version='1.0.1',
     description="logging seqhandler for python",
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -19,7 +19,7 @@ setup(
     install_requires=["requests"],
     include_package_data=True,
     url = 'https://github.com/wearetriple/seqpylogger',
-    download_url = 'https://github.com/wearetriple/seqpylogger/archive/1.0.0.tar.gz',
+    download_url = 'https://github.com/wearetriple/seqpylogger/archive/1.0.1.tar.gz',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
