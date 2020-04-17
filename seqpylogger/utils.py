@@ -10,11 +10,14 @@ def setInterval(interval):
     interval : int
         Seconds when every repeat should happen
     """
+
     def decorator_threaded_timer(func):
         @functools.wraps(func)
         def wrapper_threaded_timer(*args, **kwargs):
             SetInterval(func, interval, args=args, kwargs=kwargs)
+
         return wrapper_threaded_timer
+
     return decorator_threaded_timer
 
 
@@ -22,6 +25,7 @@ class SetInterval:
     """SetInterval class inspired bij js setInterval(function, interval)
     Also has args, kwargs functionality
     """
+
     def __init__(self, function, seconds, *args, **kwargs):
         self.interval_seconds = seconds
         self.repeating_function = function
@@ -38,7 +42,7 @@ class SetInterval:
             interval=self.interval_seconds,
             function=self._interval_handler,
             args=self._args,
-            kwargs=self._kwargs
+            kwargs=self._kwargs,
         )
         thread.daemon = True
         thread.start()
