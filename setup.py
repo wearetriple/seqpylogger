@@ -1,21 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-import time
-
-from setuptools import find_packages, setup
+from setuptools import setup
 
 setup(
     name="seqpylogger",
-    version=int(time.time()),
-    description="Add seqhandler for python",
+    version='1.0.0',
+    description="logging seqhandler for python",
     author="Triple",
-    packages=find_packages(),
+    packages=["seqpylogger"],
     install_requires=["requests"],
     include_package_data=True,
+    url = 'https://github.com/wearetriple/seqpylogger',
+    download_url = 'https://github.com/wearetriple/seqpylogger/archive/1.0.0.tar.gz',
     classifiers=[
-        # Trove classifiers
-        # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'Topic :: Software Development :: System Logging',
+        'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3'
     ]

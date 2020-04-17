@@ -11,7 +11,6 @@ import requests
 from logging.handlers import BufferingHandler
 
 
-
 class SeqPyLoggerHandler(BufferingHandler):
     def __init__(self, capacity=10, formatter_style='%'):
         self.formatter_style = formatter_style
@@ -19,8 +18,6 @@ class SeqPyLoggerHandler(BufferingHandler):
         super().__init__(capacity=10)
     
     def flush(self):
-        # for record in self.buffer:
-        #     print(self.format(record))
         if len(self.buffer) > 0:
             self.send_to_seq()
         return super().flush()
@@ -60,8 +57,15 @@ class SeqPyLoggerHandler(BufferingHandler):
         if (server_url[-1] != "/"):
             server_url += "/"
 
-        resonse = requests.post(f"{os.getenv('SEQ_SERVER')}api/events/raw", data=message_body, headers=headers)
-    
+        ok_result = self.send_call(server_url, headers, message_body)
+        if not ok_result:
+            # Complete fallback
+            with open("seqpylogger_error.log", 'a', encoding="utf-8") as f:
+                f.write(datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f%Z") + "\n")
+                f.write("Seq sending had an unhandeled exception\n")
+                f.write(f"Failed to send following log data:\n{message_body}\n")
+            logging.error("SeqPyLogger failed to send messages to seq, see seqpylogger_error.log")
+
     def add_exception(self, record):
         if record.exc_info and any(record.exc_info):
             return str.join('', traceback.format_exception(*record.exc_info))
@@ -69,13 +73,27 @@ class SeqPyLoggerHandler(BufferingHandler):
             return None
     
     def format_message(self, record):
-        if (self.formatter_style != "%"):
-            print("Unimplemented formatting style")
-
         record_args = {}
-        record.message = record.msg % record.args
+        if (self.formatter_style != "%"):
+            logging.warning("SeqPyLogger Unimplemented formatting style")
+            return record_args
+        try:
+            record.message = record.msg % record.args
+        except TypeError:
+            logging.error("SeqPyLogger message formatting failed (%s)", record.msg)
+            record.message = record.msg
         for i, arg in enumerate(record.args):
             record_args.update({"arg_%d" % i: arg})
             record.msg = record.msg.replace("%s", "{arg_%d}" % i , 1)
         
         return record_args
+    
+    def send_call(self, server_url, headers, message_body):
+        ok_status = True
+        try:
+            resonse = requests.post(f"{server_url}api/events/raw", data=message_body, headers=headers)
+            resonse.raise_for_status()
+        except Exception as e:
+            logging.exception("SeqPyLogger sending raised exception")
+            ok_status = False
+        return ok_status
