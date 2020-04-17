@@ -1,11 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from setuptools import setup
+from os import path
+
+this_directory = path.abspath(path.dirname(__file__))
+
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setup(
     name="seqpylogger",
     version='1.0.0',
     description="logging seqhandler for python",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     author="Triple",
     packages=["seqpylogger"],
     install_requires=["requests"],
