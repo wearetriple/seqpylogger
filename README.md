@@ -64,4 +64,4 @@ except:
 
 ## Images
 
-![Screenshot image](assets/screenshot.png)
+![Screenshot image](https://github.com/wearetriple/seqpylogger/raw/master/assets/screenshot.png)
