@@ -1,0 +1,5 @@
+[MESSAGES CONTROL]
+# R0903: Too few public methods (1/2) (too-few-public-methods)
+# W0703: Catching too general exception Exception (broad-except)
+# C0330: Wrong hanging indentation before block (add 4 spaces). // Clashes with black formatting
+disable=R0903, W0703, C0330
