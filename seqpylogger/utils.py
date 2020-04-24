@@ -1,10 +1,13 @@
+"""
+Module: containing helper functions
+"""
 import threading
 import functools
 
 
-def setInterval(interval):
+def set_interval(interval):
     """Decorator function to add SetInterval
-    
+
     Parameters
     ----------
     interval : int
@@ -19,6 +22,32 @@ def setInterval(interval):
         return wrapper_threaded_timer
 
     return decorator_threaded_timer
+
+
+def url_add_trailing_slash(uri: str) -> str:
+    """Add trailing slash to url if this is valid
+
+    Parameters
+    ----------
+    uri : str
+        Web address to update
+
+    Returns
+    -------
+    str
+        uri or updated uri
+    """
+
+    if len(uri) == 0 or uri[-1] == "/":
+        return uri
+
+    split_uri = str.split(uri, "/")
+    print(split_uri)
+    if len(split_uri) == 0:
+        return f"{uri}/"
+    if len(split_uri[-1]) > 1 and "?" not in split_uri[-1]:
+        return f"{uri}/"
+    return uri
 
 
 class SetInterval:
