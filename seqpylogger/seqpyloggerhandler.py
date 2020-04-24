@@ -28,11 +28,11 @@ class SeqPyLoggerHandler(BufferingHandler):
         """Prepares record for sending to seq"""
         batch_objects = []
         for record in self.buffer:
-            record_object = SeqPyLoggerHandler.format_record_for_seq(record)
-
+            # format_message monkey patchs LogRecord with .message 
             record_args = SeqPyLoggerHandler.format_message(
                 record, self.formatter_style
             )
+            record_object = SeqPyLoggerHandler.format_record_for_seq(record)
             record_object.update(record_args)
 
             ex = SeqPyLoggerHandler.add_exception(record)
@@ -41,8 +41,7 @@ class SeqPyLoggerHandler(BufferingHandler):
 
             batch_objects.append(json.dumps(record_object, separators=(",", ":")))
 
-        message_body = str.join("\n", batch_objects)
-        seqsender.SeqSender(message_body)
+        seqsender.SeqSender.send(batch_objects)
 
     @staticmethod
     def format_record_for_seq(record: logging.LogRecord) -> dict:
