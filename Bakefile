@@ -20,6 +20,6 @@ lint:
 security:
     export PIPENV_VERBOSITY=-1
     pipenv check
-    pipenv run bandit -x ./.venv -r .
+    pipenv run bandit -r .
 
 check/all: lint typing security test
