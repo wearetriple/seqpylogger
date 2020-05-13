@@ -42,7 +42,7 @@ def url_add_trailing_slash(uri: str) -> str:
         return uri
 
     split_uri = str.split(uri, "/")
-    print(split_uri)
+
     if len(split_uri) == 0:
         return f"{uri}/"
     if len(split_uri[-1]) > 1 and "?" not in split_uri[-1]:
