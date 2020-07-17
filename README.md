@@ -1,5 +1,7 @@
 # SeqPyLogger
 
+[![PyPI version](https://badge.fury.io/py/seqpylogger.png)](https://badge.fury.io/py/seqpylogger)
+
 ## Usage
 
 ```python
