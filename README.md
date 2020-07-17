@@ -107,7 +107,7 @@ except:
 
 # Changelog
 
-inspired by (https://keepachangelog.com/en/1.0.0/)[Keep a changelog]
+inspired by [Keep a changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [2020-07-17]
 - [Fixed] .msg and arg objects always converted to str
