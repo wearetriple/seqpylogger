@@ -41,6 +41,40 @@ except:
 seqLogger.manual_flush(wait=5)
 ```
 
+An alternative way of setting the handler is using the dictConfig
+
+```python
+import os
+import time
+import logging
+import logging.config
+
+os.environ["SEQ_APIKEY"] = "xSxExQxAxPxIxKxExYx"
+os.environ["SEQ_SERVER"] = "http://localhost:8794/"
+os.environ["Environment"] = "Staging"
+
+logger_config = {
+    "version": 1,
+    "disable_existing_loggers": True,
+    "root": {
+        "level": logging.INFO,
+        "handlers": ["seq"]
+    },
+    "handlers": {
+        "seq": {
+            "level": logging.INFO,
+            "class": "seqpylogger.SeqPyLogger"
+        },
+    },
+}
+
+logging.config.dictConfig(logger_config)
+
+logging.info("Example message")
+
+time.sleep(15)  # wait some time to allow logs to flush
+```
+
 ## Test install
 
 ```bash
@@ -67,14 +101,22 @@ except:
     logging.fatal("Stacktrace is not limited to ERROR", exc_info=1)
 ```
 
-
 ## Images
 
 ![Screenshot image](https://github.com/wearetriple/seqpylogger/raw/master/assets/screenshot.png)
 
-## Changelog
+# Changelog
 
-[2020-05-13]
+inspired by (https://keepachangelog.com/en/1.0.0/)[Keep a changelog]
+
+## [2020-07-17]
+- [Fixed] .msg and arg objects always converted to str
+- [Changed] internal logs nolonger use root logger
+
+## [2020-05-13]
 - [Fixed] Removed print line when adding seq url without trailing slash
-- [Changed] README example to fully work as if copied
+- [Changed] README example to fully work if copied
 - [Added] changelog to README
+
+## [Unreleased]
+- Use non daemon thread to prevent need for manual_flush on exit

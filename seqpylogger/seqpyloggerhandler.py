@@ -10,6 +10,9 @@ from logging.handlers import BufferingHandler
 from . import config, seqsender
 
 
+LOG = logging.getLogger(config.LOGGER_NAME)
+
+
 class SeqPyLoggerHandler(BufferingHandler):
     """
     Handles incomming log records with buffer
@@ -116,13 +119,18 @@ class SeqPyLoggerHandler(BufferingHandler):
         if formatter_style != "%":
             logging.warning("SeqPyLogger Unimplemented formatting style")
             return record_args
+
+        # Prevent logging not str type
+        if not isinstance(record.msg, str):
+            record.msg = str(record.msg)
+
         try:
             record.message = record.msg % record.args
         except TypeError:
-            logging.error("SeqPyLogger message formatting failed (%s)", record.msg)
+            LOG.warning("SeqPyLogger message formatting failed - (%s)", record.msg)
             record.message = record.msg
         for i, arg in enumerate(record.args):
-            record_args.update({"arg_%d" % i: arg})
+            record_args.update({"arg_%d" % i: str(arg)})
             record.msg = record.msg.replace("%s", "{arg_%d}" % i, 1)
 
         return record_args
