@@ -121,5 +121,5 @@ inspired by [Keep a changelog](https://keepachangelog.com/en/1.0.0/)
 - [Added] changelog to README
 
 ## [Unreleased]
-- Use non daemon thread to prevent need for manual_flush on exit
-- String formatting only works for `%s` not for `%d`, the argument is stil available but the message misses the value
+- Use non daemon thread to prevent need for manual_flush on exit or/and on sigterm run flush
+- String formatting only works for `%s` not for `%d`, the argument is stil available but the message misses the value 
