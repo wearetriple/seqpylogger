@@ -2,6 +2,8 @@
 
 [![PyPI version](https://badge.fury.io/py/seqpylogger.png)](https://badge.fury.io/py/seqpylogger)
 
+SeqPyLogger is a python loghandler for seq (by datalust). It allows 
+
 ## Usage
 
 ```python
@@ -110,6 +112,9 @@ except:
 # Changelog
 
 inspired by [Keep a changelog](https://keepachangelog.com/en/1.0.0/)
+
+## [2020-12-29]
+- [Fixed] old dependencies for development
 
 ## [2020-07-17]
 - [Fixed] .msg and arg objects always converted to str
