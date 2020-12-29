@@ -2,7 +2,7 @@
 
 [![PyPI version](https://badge.fury.io/py/seqpylogger.png)](https://badge.fury.io/py/seqpylogger)
 
-SeqPyLogger is a python loghandler for seq (by datalust). It allows 
+SeqPyLogger is a python loghandler for seq (by datalust).
 
 ## Usage
 
