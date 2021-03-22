@@ -113,6 +113,9 @@ except:
 
 inspired by [Keep a changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [2020-03-22]
+- [Fixed] Update dependencies in Pipfile.lock
+
 ## [2020-12-29]
 - [Fixed] old dependencies for development
 
