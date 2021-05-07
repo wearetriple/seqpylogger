@@ -79,7 +79,15 @@ logging.info("Example message")
 time.sleep(15)  # wait some time to allow logs to flush
 ```
 
+## Installation
+
+```bash
+pip install seqpylogger
+```
+
 ## Test install
+
+Used for development on the package.
 
 ```bash
 sudo python3 -m pip install -U .
@@ -131,3 +139,4 @@ inspired by [Keep a changelog](https://keepachangelog.com/en/1.0.0/)
 ## [Unreleased]
 - Use non daemon thread to prevent need for manual_flush on exit or/and on sigterm run flush
 - String formatting only works for `%s` not for `%d`, the argument is stil available but the message misses the value 
+- Environment variable only works using `Environment` while full uppercase is the best practice for environment variables
