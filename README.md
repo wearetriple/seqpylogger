@@ -1,8 +1,8 @@
 # SeqPyLogger
 
-[![PyPI version](https://badge.fury.io/py/seqpylogger.png)](https://badge.fury.io/py/seqpylogger)
+[![PyPI version](https://img.shields.io/pypi/v/seqpylogger)](https://pypi.org/project/seqpylogger/)
 
-SeqPyLogger is a python loghandler for seq (by datalust).
+SeqPyLogger is a python loghandler for [seq](https://datalust.co/seq).
 
 ## Usage
 
@@ -121,7 +121,14 @@ except:
 
 inspired by [Keep a changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [2020-03-22]
+
+## [2021-08-13]
+- [Fixed] Replaced badge.fury.io pypi badge with shields.io
+- [Changed] Added tagging in create_release.sh
+- [Changed] Used `atexit` to register flush on exit
+- [Fixed] Fixed issue of duplicate logs when doing a manualflush
+
+## [2021-03-22]
 - [Fixed] Update dependencies in Pipfile.lock
 
 ## [2020-12-29]
@@ -137,6 +144,5 @@ inspired by [Keep a changelog](https://keepachangelog.com/en/1.0.0/)
 - [Added] changelog to README
 
 ## [Unreleased]
-- Use non daemon thread to prevent need for manual_flush on exit or/and on sigterm run flush
 - String formatting only works for `%s` not for `%d`, the argument is stil available but the message misses the value 
 - Environment variable only works using `Environment` while full uppercase is the best practice for environment variables

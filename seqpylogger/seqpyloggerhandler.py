@@ -20,12 +20,16 @@ class SeqPyLoggerHandler(BufferingHandler):
 
     def __init__(self, capacity=10, formatter_style="%"):
         self.formatter_style = formatter_style
-        super().__init__(capacity=10)
+        super().__init__(capacity=capacity)
 
     def flush(self):
-        if len(self.buffer) > 0:
-            self.send_to_seq()
-        return super().flush()
+        try:
+            self.acquire()
+            if len(self.buffer) > 0:
+                self.send_to_seq()
+                super().flush()
+        finally:
+            self.release()
 
     def send_to_seq(self):
         """Prepares record for sending to seq"""

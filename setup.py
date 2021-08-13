@@ -2,17 +2,15 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup
 from os import path
-
-VERSION = "1.0.6"
+import pathlib
 
 this_directory = path.abspath(path.dirname(__file__))
-
-with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
+version = pathlib.Path(this_directory, ".version").read_text()
+long_description = pathlib.Path(this_directory, "README.md").read_text()
 
 setup(
     name="seqpylogger",
-    version=f"{VERSION}",
+    version=version,
     description="python loghandler for seq",
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -21,7 +19,7 @@ setup(
     install_requires=["requests"],
     include_package_data=True,
     url='https://github.com/wearetriple/seqpylogger',
-    download_url=f"https://pypi.io/packages/source/s/seqpylogger/seqpylogger-{VERSION}.tar.gz",
+    download_url=f"https://pypi.io/packages/source/s/seqpylogger/seqpylogger-{version}.tar.gz",
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',

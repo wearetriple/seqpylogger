@@ -30,6 +30,9 @@ if __name__ == "__main__":
 
     logger.info("Test log message with argument %s", "dummy argument")
     logger.info("Test log message with arguments %s, %s", "dummy argument 1", "dummy argument 2")
+    
+    # This does still not log correctly
+    logger.info("Test log message with arguments double decimal %d, %d", 123, 321)
 
     try:
         raise Exception("Some issue")
@@ -56,7 +59,4 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             break
             
-    
-    # Run manual flush with wait to prevent last messages not sending when program ends
     logger.info("Bye")
-    seqLogger.manual_flush(wait=5)
