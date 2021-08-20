@@ -117,7 +117,8 @@ except:
 inspired by [Keep a changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [2021-08-20]
-- [Fixed] Missing .version file in MANIFEST.md broke pip installation
+- [Fixed] Version file removed as this broke pip installation
+- ~~[Fixed] Missing .version file in MANIFEST.md broke pip installation~~
 
 ## [2021-08-13]
 - [Fixed] Replaced badge.fury.io pypi badge with shields.io

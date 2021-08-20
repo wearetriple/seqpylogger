@@ -1,1 +1,1 @@
-recursive-include seqpylogger *.py .version
+recursive-include seqpylogger *.py
