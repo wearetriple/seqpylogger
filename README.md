@@ -39,10 +39,7 @@ except:
     logging.exception("An error occured but now we have the stacktrace")
     # logging.error("There was an error", exc_info=1)  # alternative to .exception()
 
-# logs are flushed every 10 seconds
-
-# Run manual flush with wait to prevent last messages not sending when program ends
-seqLogger.manual_flush(wait=5)
+# logs are flushed every 10 seconds and every 10 logs
 ```
 
 An alternative way of setting the handler is using the dictConfig
@@ -75,8 +72,6 @@ logger_config = {
 logging.config.dictConfig(logger_config)
 
 logging.info("Example message")
-
-time.sleep(15)  # wait some time to allow logs to flush
 ```
 
 ## Installation
@@ -121,6 +116,8 @@ except:
 
 inspired by [Keep a changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [2021-08-20]
+- [Fixed] Missing .version file in MANIFEST.md broke pip installation
 
 ## [2021-08-13]
 - [Fixed] Replaced badge.fury.io pypi badge with shields.io
