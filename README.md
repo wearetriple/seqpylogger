@@ -116,6 +116,10 @@ except:
 
 inspired by [Keep a changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [2023-01-08]
+- [Fixed] Update dependencies in Pipfile.lock
+- [Added] Tests for basic usage (added script `pipenv run tests`)
+
 ## [2021-08-20]
 - [Fixed] Version file removed as this broke pip installation
 - ~~[Fixed] Missing .version file in MANIFEST.md broke pip installation~~

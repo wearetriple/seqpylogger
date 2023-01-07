@@ -4,7 +4,7 @@ from setuptools import setup
 from os import path
 import pathlib
 
-VERSION = "1.0.9"
+VERSION = "1.0.10"
 
 this_directory = path.abspath(path.dirname(__file__))
 long_description = pathlib.Path(this_directory, "README.md").read_text()
