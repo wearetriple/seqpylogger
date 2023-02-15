@@ -17,7 +17,7 @@ LOCK = threading.Lock()
 
 
 class SeqPyLogger(QueueHandler):
-    """"LogHandler for seq"""
+    """LogHandler for seq"""
 
     def __init__(self, buffer_capacity: int = 10, disable_on_exit_flush=False):
         self.log_queue: queue.Queue = queue.Queue(-1)
@@ -64,8 +64,7 @@ class SeqPyLogger(QueueHandler):
 
     @set_interval(10)
     def timout_flush(self):
-        """Runs flush every 10 seconds
-        """
+        """Runs flush every 10 seconds"""
         self.manual_flush()
 
     def __exit_flush(self):

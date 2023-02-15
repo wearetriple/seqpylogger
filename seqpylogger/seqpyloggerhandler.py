@@ -133,6 +133,10 @@ class SeqPyLoggerHandler(BufferingHandler):
         except TypeError:
             LOG.warning("SeqPyLogger message formatting failed - (%s)", record.msg)
             record.message = record.msg
+        
+        # Fixes %d not being replaced
+        record.msg = record.msg.replace("%d", "%s")
+
         for i, arg in enumerate(record.args):
             record_args.update({"arg_%d" % i: str(arg)})
             record.msg = record.msg.replace("%s", "{arg_%d}" % i, 1)
