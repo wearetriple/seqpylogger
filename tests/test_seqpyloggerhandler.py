@@ -48,3 +48,26 @@ def test_format_message():
     assert record.message == "logmessage foo"
     assert record.msg == "logmessage {arg_0}"
     assert result == {"arg_0": "foo"}
+
+def test_format_message_numbers():
+    # Arrange
+    record = logging.LogRecord(
+        "RecordName",
+        logging.INFO,
+        "pathename",
+        1,
+        "logmessage %d",
+        args=(123,),
+        exc_info=(),
+        func="funcstr",
+        sinfo="sinfostr",
+    )
+    logging.Formatter(fmt=None, datefmt=None, style='%').format(record)
+
+    # Act
+    result = SeqPyLoggerHandler.format_message(record, formatter_style='%')
+
+    # Assert
+    assert record.message == "logmessage 123"
+    assert record.msg == "logmessage {arg_0}"
+    assert result == {"arg_0": "123"}
