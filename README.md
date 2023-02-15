@@ -116,6 +116,9 @@ except:
 
 inspired by [Keep a changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [2023-02-15]
+- [Fixed] Formatting using `%d` broke the internal formatter
+
 ## [2023-01-08]
 - [Fixed] Update dependencies in Pipfile.lock
 - [Added] Tests for basic usage (added script `pipenv run tests`)
@@ -146,5 +149,4 @@ inspired by [Keep a changelog](https://keepachangelog.com/en/1.0.0/)
 - [Added] changelog to README
 
 ## [Unreleased]
-- String formatting only works for `%s` not for `%d`, the argument is stil available but the message misses the value 
 - Environment variable only works using `Environment` while full uppercase is the best practice for environment variables
