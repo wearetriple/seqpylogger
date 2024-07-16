@@ -6,12 +6,13 @@ import atexit
 import time
 import queue
 import threading
-from logging import getLogger, NullHandler, LogRecord
+
+from logging import LogRecord
 from logging.handlers import QueueHandler
-from .seqpyloggerhandler import SeqPyLoggerHandler
-from .seqpyloggerqueuelistener import SeqPyLoggerQueueListener
-from .utils import set_interval
-from . import config
+
+from seqpylogger.seqpyloggerhandler import SeqPyLoggerHandler
+from seqpylogger.seqpyloggerqueuelistener import SeqPyLoggerQueueListener
+from seqpylogger.utils import set_interval
 
 LOCK = threading.Lock()
 

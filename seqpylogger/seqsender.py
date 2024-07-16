@@ -1,6 +1,7 @@
 """
 Handels seq http call
 """
+
 from typing import List
 import logging
 import datetime
@@ -79,7 +80,10 @@ class SeqSender:
         # Complete fallback
         with open("seqpylogger_error.log", "a", encoding="utf-8") as fstream:
             fstream.write(
-                datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f%Z") + "\n"
+                datetime.datetime.now(datetime.timezone.utc).strftime(
+                    "%Y-%m-%dT%H:%M:%S.%f%Z"
+                )
+                + "\n"
             )
             fstream.write("Seq sending had an unhandeled exception\n")
             fstream.write(f"Failed to send the following log data:\n{message_body}\n")

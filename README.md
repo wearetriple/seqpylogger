@@ -116,6 +116,10 @@ except:
 
 inspired by [Keep a changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [2024-07-16]
+- [Added] allow for extra named attributes
+- [Changed] ENVIRONMENT with capital letters will be recognized first
+
 ## [2023-02-15]
 - [Fixed] Formatting using `%d` broke the internal formatter
 
@@ -150,3 +154,4 @@ inspired by [Keep a changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 - Environment variable only works using `Environment` while full uppercase is the best practice for environment variables
+- `logger.info("", extra={})` parameters are not shown in seq

@@ -25,5 +25,5 @@ SEQ_SERVER = os.getenv("SEQ_SERVER") or raise_missing(
 SEQ_APIKEY = os.getenv("SEQ_APIKEY") or raise_missing(
     "Missing SEQ_APIKEY environment variable"
 )
-ENVIRONMENT = os.getenv("Environment", "NOT-SET")
+ENVIRONMENT = os.getenv("ENVIRONMENT") or os.getenv("Environment", "NOT-SET")
 LOGGER_NAME = "seqpylogger"

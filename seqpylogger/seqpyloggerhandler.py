@@ -1,13 +1,16 @@
 """
 Handles incomming log records with buffer
 """
+
 import datetime
 import json
 import logging
 import traceback
+
 from typing import Optional, Dict
 from logging.handlers import BufferingHandler
-from . import config, seqsender
+
+from seqpylogger import config, seqsender
 
 
 LOG = logging.getLogger(config.LOGGER_NAME)
@@ -17,6 +20,17 @@ class SeqPyLoggerHandler(BufferingHandler):
     """
     Handles incomming log records with buffer
     """
+
+    # These are the standard log record attributes
+    RECORD_KEYS = set(
+        [
+            x
+            for x in logging.LogRecord(
+                "name", 0, "pathname", 0, "msg", None, None
+            ).__dict__.keys()
+            if x[0] != "_"
+        ]
+    )
 
     def __init__(self, capacity=10, formatter_style="%"):
         self.formatter_style = formatter_style
@@ -35,20 +49,30 @@ class SeqPyLoggerHandler(BufferingHandler):
         """Prepares record for sending to seq"""
         batch_objects = []
         for record in self.buffer:
-            # format_message monkey patchs LogRecord with .message
-            record_args = SeqPyLoggerHandler.format_message(
-                record, self.formatter_style
-            )
-            record_object = SeqPyLoggerHandler.format_record_for_seq(record)
-            record_object.update(record_args)
-
-            ex = SeqPyLoggerHandler.add_exception(record)
-            if ex is not None:
-                record_object.update({"@x": ex})
-
+            try:
+                record_object = self.parse_record(record)
+            except Exception:
+                LOG.warning("SeqPyLogger failed to parse record")
+                continue
             batch_objects.append(json.dumps(record_object, separators=(",", ":")))
 
         seqsender.SeqSender.send(batch_objects)
+
+    def parse_record(self, record: logging.LogRecord):
+        # format_message monkey patchs LogRecord with .message
+        record_args = self.format_message(record, self.formatter_style)
+
+        record_object = self.format_record_for_seq(record)
+        record_extras = self.get_extra_properties(record)
+
+        record_object.update(record_args)
+        record_object.update(record_extras)
+
+        ex = self.add_exception(record)
+        if ex is not None:
+            record_object.update({"@x": ex})
+
+        return record_object
 
     @staticmethod
     def format_record_for_seq(record: logging.LogRecord) -> dict:
@@ -81,6 +105,27 @@ class SeqPyLoggerHandler(BufferingHandler):
         }
 
         return record_object
+
+    @staticmethod
+    def get_extra_properties(record: logging.LogRecord) -> dict:
+        """Returns non standard log record properties
+
+        Parameters
+        ----------
+        record : logging.LogRecord
+            initial log record
+
+        Returns
+        -------
+        dict
+            non standard log record properties
+        """
+
+        # get all record attributes
+        record_keys = set([x for x in record.__dict__.keys() if x[0] != "_"])
+        extra_keys = record_keys.difference(SeqPyLoggerHandler.RECORD_KEYS)
+
+        return {key: getattr(record, key, None) for key in extra_keys}
 
     @staticmethod
     def add_exception(record: logging.LogRecord) -> Optional[str]:
@@ -131,9 +176,9 @@ class SeqPyLoggerHandler(BufferingHandler):
         try:
             record.message = record.msg % record.args
         except TypeError:
-            LOG.warning("SeqPyLogger message formatting failed - (%s)", record.msg)
+            LOG.warning(f"SeqPyLogger message formatting failed - ({record.msg})")
             record.message = record.msg
-        
+
         # Fixes %d not being replaced
         record.msg = record.msg.replace("%d", "%s")
 
