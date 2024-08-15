@@ -3,7 +3,6 @@ Handles incomming log records with buffer
 """
 
 import datetime
-import json
 import logging
 import traceback
 
@@ -11,6 +10,7 @@ from typing import Optional, Dict
 from logging.handlers import BufferingHandler
 
 from seqpylogger import config, seqsender
+from seqpylogger.serialization import json_serialize
 
 
 LOG = logging.getLogger(config.LOGGER_NAME)
@@ -51,10 +51,10 @@ class SeqPyLoggerHandler(BufferingHandler):
         for record in self.buffer:
             try:
                 record_object = self.parse_record(record)
-            except Exception:
-                LOG.warning("SeqPyLogger failed to parse record")
-                continue
-            batch_objects.append(json.dumps(record_object, separators=(",", ":")))
+            except Exception as ex:
+                LOG.debug("SeqPyLogger failed to parse record", exc_info=ex)
+                record_object = self.fallback_parse(record)
+            batch_objects.append(json_serialize(record_object))
 
         seqsender.SeqSender.send(batch_objects)
 
@@ -73,6 +73,13 @@ class SeqPyLoggerHandler(BufferingHandler):
             record_object.update({"@x": ex})
 
         return record_object
+
+    @staticmethod
+    def fallback_parse(record: logging.LogRecord) -> dict:
+        """Fallback for parsing record, uses plain string message and no extra properties"""
+        record.msg = f"{str(record.msg)} - [{str(record.args)}]"
+        record.message = record.msg
+        return SeqPyLoggerHandler.format_record_for_seq(record)
 
     @staticmethod
     def format_record_for_seq(record: logging.LogRecord) -> dict:
@@ -166,7 +173,7 @@ class SeqPyLoggerHandler(BufferingHandler):
         """
         record_args: Dict[str, str] = {}
         if formatter_style != "%":
-            logging.warning("SeqPyLogger Unimplemented formatting style")
+            LOG.debug("SeqPyLogger Unimplemented formatting style")
             return record_args
 
         # Prevent logging not str type
@@ -175,8 +182,13 @@ class SeqPyLoggerHandler(BufferingHandler):
 
         try:
             record.message = record.msg % record.args
-        except TypeError:
-            LOG.warning(f"SeqPyLogger message formatting failed - ({record.msg})")
+        except TypeError as ex:
+            msg = str(record.msg)
+            LOG.debug(
+                "SeqPyLogger message formatting failed",
+                extra={"msg_template": msg},
+                exc_info=ex,
+            )
             record.message = record.msg
 
         # Fixes %d not being replaced

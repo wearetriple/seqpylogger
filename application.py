@@ -27,6 +27,12 @@ class RequestIdFilter(logging.Filter):
         return True
 
 
+class NonSerializableObject:
+    def __init__(self) -> None:
+        self.a = "a"
+        self.b = "b"
+
+
 if __name__ == "__main__":
     dotenv.load_dotenv()
 
@@ -37,11 +43,11 @@ if __name__ == "__main__":
     from seqpylogger import SeqPyLogger
 
     root = logging.getLogger()
+    root.setLevel(logging.DEBUG)
     seqLogger = SeqPyLogger()
     seqLogger.addFilter(RequestIdFilter())
     root.addHandler(seqLogger)
     logger = logging.getLogger("test_application")
-    logger.setLevel(logging.INFO)
 
     ch = logging.StreamHandler()
     formatter = logging.Formatter(
@@ -51,6 +57,16 @@ if __name__ == "__main__":
     root.addHandler(ch)
 
     logger.info("starting", extra={"banana": "pie"})
+
+    logger.info(
+        "with nested extra", extra=dict(level1=dict(level2=dict(level3="hello")))
+    )
+
+    logger.info(
+        "Object logging %s",
+        NonSerializableObject(),
+        extra={"object": NonSerializableObject()},
+    )
 
     logger.debug("Debug log message")
     logger.info("Informational log message")
@@ -90,12 +106,10 @@ if __name__ == "__main__":
 
     while True:
         try:
-            logger.info(
-                "Logging the time: %s",
-                datetime.datetime.now(datetime.timezone.utc).strftime(
-                    "%Y-%m-%d %H-%M-%S UTC"
-                ),
+            nowstr = datetime.datetime.now(datetime.timezone.utc).strftime(
+                "%Y-%m-%d %H-%M-%S UTC"
             )
+            logger.info("Logging the time: %s", nowstr)
             time.sleep(4)
         except KeyboardInterrupt:
             break
