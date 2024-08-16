@@ -116,6 +116,10 @@ except:
 
 inspired by [Keep a changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [2024-08-15]
+- [Added] object serialization support
+- [Added] fallback parse when parsing fails
+
 ## [2024-07-16]
 - [Added] allow for extra named attributes
 - [Changed] ENVIRONMENT with capital letters will be recognized first
