@@ -157,5 +157,9 @@ inspired by [Keep a changelog](https://keepachangelog.com/en/1.0.0/)
 - [Added] changelog to README
 
 ## [Unreleased]
-- Environment variable only works using `Environment` while full uppercase is the best practice for environment variables
-- `logger.info("", extra={})` parameters are not shown in seq
+- internal logs should not be causing a loop (print instead of log?)
+- use `requests` session for better performance / replace `requests`.
+- change pipenv to uv/pip-tools
+- change `setup.py` to `pyproject.toml`
+- support for multiple log styles (`{}` / named arguments)
+- when no logs not http call should be created
